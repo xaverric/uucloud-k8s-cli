@@ -42,15 +42,18 @@ const evaluateNodeSelector = (pods, subApp, subAppConfig) => {
 const evaluateVersion = (pods, subApp) => {
     let uuAppVersion = getSubApp(pods, subApp)?.metadata?.annotations?.UU_CLOUD_APP_VERSION;
     let image = getSubApp(pods, subApp)?.spec?.containers[0]?.image;
+    if (!uuAppVersion && !image) {
+        return "NOK - Version missing"
+    }
     return uuAppVersion ? uuAppVersion : image;
 };
 
 const evaluateRts = (pods, subApp) => {
-    return getSubApp(pods, subApp)?.metadata?.annotations?.UU_CLOUD_RUNTIME_STACK_CODE;
+    return getSubApp(pods, subApp)?.metadata?.annotations?.UU_CLOUD_RUNTIME_STACK_CODE ?? "NOK - RTS missing";
 };
 
 const evaluateDeploymentUri = (pods, subApp) => {
-    return getSubApp(pods, subApp)?.metadata?.annotations?.UU_CLOUD_APP_DEPLOYMENT_URI;
+    return getSubApp(pods, subApp)?.metadata?.annotations?.UU_CLOUD_APP_DEPLOYMENT_URI ?? "NOK - Deployment URI missing";
 };
 
 const evaluateNodeSize = (pods, subApp, subAppConfig, nodeSizes) => {
@@ -78,16 +81,19 @@ const isNodeSizeValueEqual = (nodesize, valueName, currentSubAppValue) => {
 }
 
 const evaluateCpu = (pods, subApp) => {
-    return getSubApp(pods, subApp)?.spec?.containers[0]?.resources?.requests?.cpu;
+    return getSubApp(pods, subApp)?.spec?.containers[0]?.resources?.requests?.cpu ?? "NOK - CPU missing";
 };
 
 const evaluateMemory = (pods, subApp) => {
-    return getSubApp(pods, subApp)?.spec?.containers[0]?.resources?.requests?.memory;
+    return getSubApp(pods, subApp)?.spec?.containers[0]?.resources?.requests?.memory ?? "NOK - RAM missing";
 };
 
 const evaluateContainerStatus = (pods, subApp) => {
     const status = getSubApp(pods, subApp)?.status;
     const containerStatus = status?.containerStatuses[0];
+    if (!containerStatus) {
+        return "NOK - Container missing"
+    }
     return `${status?.phase} [${status?.startTime}] - Restarts: ${containerStatus?.restartCount} - ${containerStatus?.restartCount > 0 ? "NOK" : "OK"}`;
 };
 

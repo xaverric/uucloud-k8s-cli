@@ -37,7 +37,7 @@ const generateUu5StringForKey = (messages, header) => {
         .map(item => {
             return {
                 value: Object.values(item),
-                style: item[header].includes("NOK") ? ERROR_COLOR_SCHEME : {}
+                style: item[header]?.includes("NOK") ? ERROR_COLOR_SCHEME : {}
             }
         });
     return uu5StringTemplate(rows, columns, header);
@@ -45,13 +45,14 @@ const generateUu5StringForKey = (messages, header) => {
 
 const generateUu5StringProblemReport = (messages, header) => {
     let problems = messages
-        .map(item => {
-            return {
-                subApp: item.subApp,
-                problems: Object.values(item).filter(item => item.includes("NOK")).join(" - ")
-            }
-        }).
-        filter(item => !!item.problems);
+        .flatMap(item => Object.values(item)
+            .map(problem => {
+                return {
+                    subApp: item.subApp,
+                    problem
+                }
+            }))
+        .filter(item => item.problem.includes("NOK"));
     let columns = [{header: "subApp"}, {header: "Problem"}];
     let rows = problems.map(item => {
         return {
