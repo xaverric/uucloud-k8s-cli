@@ -23,7 +23,7 @@ const check = async cmdArgs => {
     }
 
     if (extraPodsNotInConfiguration?.length > 0) {
-        console.log(`${extraPodsNotInConfiguration.length} extra pod/s found within k8s cluster, which is missing in the configuration.`);
+        CONSOLE_LOG.info(`${extraPodsNotInConfiguration.length} extra pod/s found within k8s cluster, which is missing in the configuration.`);
         console.table(extraPodsNotInConfiguration);
     }
 }
@@ -56,8 +56,9 @@ const update = async cmdArgs => {
             }
         });
 
-    for (const subApp of subApps) {
-        await updateDeployment(subApp, cmdArgs);
+    for (const subAppEvaluation of subApps) {
+        const subAppConfiguration = environmentConfiguration[subAppEvaluation.subApp];
+        await updateDeployment(subAppEvaluation, subAppConfiguration, cmdArgs);
     }
 
     await storeDeployments(deployments, "-updated");

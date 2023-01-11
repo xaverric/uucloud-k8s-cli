@@ -3,7 +3,7 @@ const path = require("path");
 const os = require("os");
 const {subAppNameExtractor} = require("../c3/c3-search-helper");
 
-const DEPLOYMENT_BACKUP_PATH = path.join(os.homedir(), '.uucloud-k8s', 'logs')
+const DEPLOYMENT_BACKUP_PATH = path.join(os.homedir(), '.uucloud-k8s', 'deployments_backup')
 
 const storeDeployments = (deployments, postfix = "") => {
     _createDefaultFolderIfNotExist();

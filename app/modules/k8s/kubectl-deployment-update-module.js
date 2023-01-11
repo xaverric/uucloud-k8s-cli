@@ -11,11 +11,11 @@ const composeNodeSelectorsPatchArray = (subApp) => {
     return `[${patchArray.join(",")}]`;
 }
 
-const updateDeployment = async (subApp, cmdArgs) => {
-    CONSOLE_LOG.info(`Updating deployment for ${subApp.deploymentName}...`)
+const updateDeployment = async (subAppEvaluation, subAppConfiguration, cmdArgs) => {
+    CONSOLE_LOG.info(`Updating deployment for ${subAppEvaluation.deploymentName}...`)
     let contextSettings = readContextConfiguration(cmdArgs);
     await callCliCommand(`kubectl config use-context ${contextSettings.context}`);
-    await callCliCommand(`kubectl patch deployment ${subApp.deploymentName} -n ${contextSettings.nameSpace} --type json -p=${composeNodeSelectorsPatchArray(subApp)}`);
+    await callCliCommand(`kubectl patch deployment ${subAppEvaluation.deploymentName} -n ${contextSettings.nameSpace} --type json -p=${composeNodeSelectorsPatchArray(subAppConfiguration)}`);
 }
 
 module.exports = {
