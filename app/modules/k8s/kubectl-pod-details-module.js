@@ -1,7 +1,6 @@
 const {callCliCommand} = require("../cmd/cmd-exec-module.js");
 const {readContextConfiguration} = require("../configuration/configuration-reader-module");
 const {CONSOLE_LOG} = require("../../logger/logger");
-const optionFlag = require("command-line-args/lib/option-flag.mjs");
 
 const getPodsMetadata = async cmdArgs => {
     let contextSettings = readContextConfiguration(cmdArgs);
