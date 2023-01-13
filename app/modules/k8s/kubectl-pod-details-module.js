@@ -1,5 +1,6 @@
 const {callCliCommand} = require("../cmd/cmd-exec-module.js");
 const {readContextConfiguration} = require("../configuration/configuration-reader-module");
+const {CONSOLE_LOG} = require("../../logger/logger");
 
 const getPodsMetadata = async cmdArgs => {
     let contextSettings = readContextConfiguration(cmdArgs);
@@ -27,7 +28,7 @@ const getPodDetail = line => {
     try {
         result = JSON.parse(line); 
     } catch (e) {
-        // ignore error and return empty line for given pod
+        CONSOLE_LOG.error(`Something went wrong when loading pod metadata: ${e}`);
     }
     return result;
 };
