@@ -1,6 +1,7 @@
 const {callCliCommand} = require("../cmd/cmd-exec-module.js");
 const {readContextConfiguration} = require("../configuration/configuration-reader-module");
 const {CONSOLE_LOG} = require("../../logger/logger");
+const optionFlag = require("command-line-args/lib/option-flag.mjs");
 
 const getPodsMetadata = async cmdArgs => {
     let contextSettings = readContextConfiguration(cmdArgs);
@@ -16,11 +17,13 @@ const getPods = async cmdArgs => {
 };
 
 const getArrayFromLineContent = (lines) => {
-    return lines.toString()
-        .replace(/} {/g, "}||||{")
-        .slice(1)
-        .slice(0, -1)
-        .split("||||");
+    let result = lines.toString().replace(/} {/g, "}||||{");
+    if (process.platform === "win32") {
+        result = result
+            .slice(1)
+            .slice(0, -1)
+    }
+    return result.split("||||");
 };
 
 const getPodDetail = line => {
