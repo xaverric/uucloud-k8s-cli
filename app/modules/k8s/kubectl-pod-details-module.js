@@ -29,6 +29,7 @@ const getPodDetail = line => {
         result = JSON.parse(line); 
     } catch (e) {
         CONSOLE_LOG.error(`Something went wrong when loading pod metadata: ${e}`);
+        CONSOLE_LOG.info(`Line: ${line}`);
     }
     return result;
 };
