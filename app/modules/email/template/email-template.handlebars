@@ -1,0 +1,57 @@
+<html>
+<head>
+    <meta charset="utf-8">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto">
+    <style>
+        body {
+            font-family: 'Roboto', serif;;
+        }
+
+        .centerdiv {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-content: center;
+        }
+
+        table {
+            border-collapse: collapse;
+            width: 100%;
+        }
+
+        th, td {
+            text-align: left;
+            padding: 8px;
+        }
+
+        tr:nth-child(even){background-color: #e1e0e5
+        }
+
+        th {
+            background-color: #aaaac0;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+<div class="centerdiv">
+    <h3 style="margin: 10px">Problems identified in <i>{{environment}}</i> environment</h3>
+    <table>
+        <thead>
+        <tr>
+            <th>Application</th>
+            <th>Problem</th>
+        </tr>
+        </thead>
+        <tbody>
+        {{#each problems}}
+            <tr>
+                <td>{{subApp}}</td>
+                <td>{{problem}}</td>
+            </tr>
+        {{/each}}
+        </tbody>
+    </table>
+</div>
+</body>
+</html>

@@ -2,6 +2,7 @@ const {readBookkitConfiguration} = require("../configuration/configuration-reade
 const login = require("../client/authorize-module");
 const {guessKeysWithSpecificKeys, guessKeysWithoutSpecificKeys} = require("./helper/print-helper-module");
 const {updateSection} = require("./helper/bookkit-helper-module");
+const {gatherProblemsFromEvaluationResult} = require("../evalution-module");
 
 const ERROR_COLOR_SCHEME = {
     colorSchema: "red",
@@ -44,15 +45,7 @@ const generateUu5StringForKey = (messages, header) => {
 }
 
 const generateUu5StringProblemReport = (messages, header) => {
-    let problems = messages
-        .flatMap(item => Object.values(item)
-            .map(problem => {
-                return {
-                    subApp: item.subApp,
-                    problem
-                }
-            }))
-        .filter(item => item.problem.includes("NOK"));
+    let problems = gatherProblemsFromEvaluationResult(messages);
     let columns = [{header: "subApp"}, {header: "Problem"}];
     let rows = problems.map(item => {
         return {
@@ -74,7 +67,7 @@ const printToBookkit = async (evaluationResult, cmdArgs) => {
         }
     }
 
-    if (envBookkitConfig.problemReport && cmdArgs.problemReport) {
+    if (envBookkitConfig.problemReport && cmdArgs.problemReportToBookkit) {
         await updateSection(bookkitConfig.uri, envBookkitConfig.problemReport.page, envBookkitConfig.problemReport.section, generateUu5StringProblemReport(evaluationResult, cmdArgs.environment), token);
     }
 }

@@ -76,7 +76,12 @@ const cmdArgumentsDefinition = [
     description: 'Diplay the ouput in the table form.'
   },
   {
-    name: 'problemReport',
+    name: 'problemReportToBookkit',
+    type: Boolean,
+    description: 'Flag applicable for the print task only. Task prints problems only to the specific bookkit page.'
+  },
+  {
+    name: 'problemReportToEmail',
     type: Boolean,
     description: 'Flag applicable for the print task only. Task prints problems only to the specific bookkit page.'
   },

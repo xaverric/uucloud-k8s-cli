@@ -9,6 +9,7 @@ const {updateDeployment} = require("./modules/k8s/kubectl-deployment-update-modu
 const {storeDeployments} = require("./modules/io/file-write-helper");
 const {subAppNameExtractor, deploymentNameExtractor} = require("./modules/c3/c3-search-helper");
 const packageJson = require("../package.json");
+const {sendEmailNotification} = require("./modules/email/email-notification-module");
 
 const check = async cmdArgs => {
     let environmentConfiguration = readEnvironmentConfiguration(cmdArgs);
@@ -26,6 +27,7 @@ const check = async cmdArgs => {
         CONSOLE_LOG.info(`${extraPodsNotInConfiguration.length} extra pod/s found within k8s cluster, which is missing in the configuration.`);
         console.table(extraPodsNotInConfiguration);
     }
+    await sendEmailNotification(evaluationResult, cmdArgs);
 }
 
 const print = async cmdArgs => {
@@ -35,6 +37,8 @@ const print = async cmdArgs => {
 
     await printToBookkit(evaluationResult, cmdArgs);
     CONSOLE_LOG.debug(`${cmdArgs.environment.toUpperCase()} environment details stored into the bookkit page.`);
+
+    await sendEmailNotification(evaluationResult, cmdArgs);
 }
 
 const update = async cmdArgs => {

@@ -169,7 +169,21 @@ const evaluateExtraPods = (pods, environmentConfiguration) => {
         .map(pod => pod?.metadata?.annotations?.APP_PACK_URL_PATH)
 }
 
+const gatherProblemsFromEvaluationResult = evaluationResult => {
+    return evaluationResult
+        .flatMap(item => Object.values(item)
+            .map(problem => {
+                return {
+                    subApp: item.subApp,
+                    problem
+                }
+            }))
+        .filter(item => item.problem.includes("NOK"));
+}
+
+
 module.exports = {
     evaluatePodMetadata,
-    evaluateExtraPods
+    evaluateExtraPods,
+    gatherProblemsFromEvaluationResult
 };

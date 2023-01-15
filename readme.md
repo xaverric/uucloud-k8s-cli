@@ -65,8 +65,11 @@ Display and verify uuApp volume mount.
 ### -t, --table               
 Diplay the ouput in the table form.
 
-### --problemReport
+### --problemReportToBookkit
 Flag applicable for the print task only. Task prints problems only to the specific bookkit page.
+
+### --problemReportToEmail
+Flag applicable for the print task only. Task reports problems via e-mail notification. Can be used for both, print and check task.
 
 ## Configuration 
 
@@ -159,6 +162,24 @@ Flag applicable for the print task only. Task prints problems only to the specif
     },
     ...
   }
+}
+```
+
+### email-config.json
+```
+{
+    "transportsConfiguration": {
+        "auth": {
+            "pass": "password",
+            "user": "username"
+        },
+        "host": "email server address",
+        "port": 465, 
+        "secure": true
+    },
+    "recipients": [
+        "recepient list email addresses"
+    ]
 }
 ```
 

@@ -39,9 +39,15 @@ const readBookkitConfiguration = cmdArgs => {
     return readJsonFile(filePath);
 }
 
+const readEmailNotificationConfiguration = cmdArgs => {
+    let filePath = path.resolve(`${cmdArgs.config}/email-config.json`);
+    return readJsonFile(filePath);
+}
+
 module.exports = {
     readEnvironmentConfiguration,
     readContextConfiguration,
     readNodeSizeConfiguration,
-    readBookkitConfiguration
+    readBookkitConfiguration,
+    readEmailNotificationConfiguration
 }
