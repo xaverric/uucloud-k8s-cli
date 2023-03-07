@@ -3,8 +3,10 @@ const {getSubApp, getSubAppCount, getSubAppNodeSelectors, subAppSelectorFunction
 
 const deepEqual = (x, y) => {
     return (x && y && typeof x === 'object' && typeof y === 'object') ?
-      (Object.keys(x).length === Object.keys(y).length) && Object.keys(x).reduce((isEqual, key) => {return isEqual && deepEqual(x[key], y[key]);}, true) :
-      (x === y);
+        (Object.keys(x).length === Object.keys(y).length) && Object.keys(x).reduce((isEqual, key) => {
+            return isEqual && deepEqual(x[key], y[key]);
+        }, true) :
+        (x === y);
 };
 
 const evaluateDeployment = (pods, subApp, subAppConfig) => {
@@ -12,7 +14,7 @@ const evaluateDeployment = (pods, subApp, subAppConfig) => {
     let status = getSubApp(pods, subApp)?.status?.phase;
     let found = getSubAppCount(pods, subApp);
 
-    if(found === 0 || found !== subAppConfig.count || status !== "Running") {
+    if (found === 0 || found !== subAppConfig.count || status !== "Running") {
         result.push(`Status (Expected/Current): Running/${status}, Count (Expected/Current): ${subAppConfig.count}/${found} - NOK`);
     } else {
         result.push(`Status: ${status}, Count: ${subAppConfig.count} - OK`);
@@ -60,15 +62,16 @@ const evaluateNodeSize = (pods, subApp, subAppConfig, nodeSizes) => {
     let result = [];
     let subAppCpu = evaluateCpu(pods, subApp);
     let subAppMemory = evaluateMemory(pods, subApp);
-    let foundNodeSizeKey = Object.keys(nodeSizes).find(nodeSizeName =>
-        isNodeSizeValueEqual(nodeSizes[nodeSizeName], "memory", subAppMemory) &&
-        isNodeSizeValueEqual(nodeSizes[nodeSizeName], "cpu", subAppCpu)
-    );
-    let foundNodeSize = nodeSizes[foundNodeSizeKey];
-    if (foundNodeSizeKey !== subAppConfig.nodeSize) {
-        result.push(`NodeSize (Expected/Found): ${subAppConfig.nodeSize}/${foundNodeSizeKey}, CPU (Expected/Current): ${foundNodeSize?.cpu}/${subAppCpu}, RAM: ${foundNodeSize?.memory}/${subAppMemory} - NOK`)
+    let foundNodeSizeKey = Object.keys(nodeSizes)
+        .filter(nodeSizeName => nodeSizeName === subAppConfig.nodeSize)
+        .filter(nodeSizeName =>
+            isNodeSizeValueEqual(nodeSizes[nodeSizeName], "memory", subAppMemory) &&
+            isNodeSizeValueEqual(nodeSizes[nodeSizeName], "cpu", subAppCpu)
+        );
+    if (foundNodeSizeKey && foundNodeSizeKey.length !== 0) {
+        result.push(`${foundNodeSizeKey[0]} - OK`);
     } else {
-        result.push(`${foundNodeSizeKey} - OK`);
+        result.push(`NodeSize (Expected/Found): ${subAppConfig.nodeSize}/${foundNodeSizeKey}, CPU (Expected/Current): ${nodeSizes[subAppConfig.nodeSize]?.cpu}/${subAppCpu}, RAM: ${nodeSizes[subAppConfig.nodeSize]?.memory}/${subAppMemory} - NOK`)
     }
     return result.join(" ");
 };
@@ -126,7 +129,7 @@ const evaluatePodMetadata = (pods, environmentConfiguration, cmdArgs) => {
     const result = [];
     Object.keys(environmentConfiguration).forEach(subApp => {
         let subAppConfig = environmentConfiguration[subApp];
-        if(subAppConfig.required) {
+        if (subAppConfig.required) {
             let evaluateSubApp = {subApp};
             if (cmdArgs.deployment) {
                 evaluateSubApp[EVALUATE_KEY_DEPLOYMENT] = evaluateDeployment(pods, subApp, subAppConfig);
