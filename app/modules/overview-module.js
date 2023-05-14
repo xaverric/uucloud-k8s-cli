@@ -36,11 +36,9 @@ const getSumOverview = (cmdArgs, environments, overview) => {
 }
 
 const _sumCpuResourcesForEnvironment = (result, environment, nodesizes) => {
-    console.log(nodesizes)
     return result.reduce((acc, item) => {
         let uuAppCount = item[`${environment}_count`];
         if (uuAppCount > 0) {
-            console.log(item);
             let cpu = nodesizes[item[`${environment}_nodesize`]].cpu;
             acc += cpu * uuAppCount;
         }

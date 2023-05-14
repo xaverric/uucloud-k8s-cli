@@ -46,7 +46,7 @@ const readEnvironmentsConfiguration = cmdArgs => {
 const readContextConfiguration = (cmdArgs, environment = undefined) => {
     let filePath = path.resolve(`${cmdArgs.config}/contexts.json`);
     let contexts = readJsonFile(filePath);
-    let environmentDetails = contexts.find(context => (context.environment) === environment || cmdArgs.environment);
+    let environmentDetails = contexts.find(context => context.environment === cmdArgs.environment || context.environment === environment);
     return environmentDetails
 };
 
