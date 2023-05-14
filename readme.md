@@ -21,6 +21,7 @@ help      Display help
 check     Performs checks based on given parameters and configuration.
 print     Performs print based on given parameters and configuration. Result is printed into the defined bookkit page.
 update    Performs update of the node selectors based on the configuration right in the k8s cluster.
+overview  Performs overview of multiple environments at once.
 version   Show tool version.
 ```
 
@@ -139,6 +140,15 @@ Flag applicable for the print task only. Task reports problems via e-mail notifi
   "accessCode2": "...", // login credentials to bookkit (user must have privileges to mannipulate with the book content)
   "oidcHost": "...", // oidc/grantToken uri
   "uri": "...", // book base uri
+  "overview": {
+    "page": "...", // page coge
+    "sections": {
+       // section codes 
+      "DEPLOYMENT": "...",
+      "NODE_SIZE": "...",
+      "SUM": "..."
+    }
+  },
   "environment": {
     "env1": { // environment name, with same name the env1.json file must exist in the same folder
       // page and sections codes must already exist in the book. Sections will be updated with content from the uucloud-k8s-cli

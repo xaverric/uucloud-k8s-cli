@@ -17,15 +17,36 @@ const readJsonFile = filePath => {
     return data;
 };
 
-const readEnvironmentConfiguration = cmdArgs => {
-    let filePath = path.resolve(`${cmdArgs.config}/${cmdArgs.environment}.json`);
+/**
+ * Read first defined environment file only.
+ *
+ * @param cmdArgs
+ * @param environment
+ * @returns {*}
+ */
+const readEnvironmentConfiguration = (cmdArgs, environment = undefined) => {
+    resolveEnvironmentValue(cmdArgs);
+    let filePath = path.resolve(`${cmdArgs.config}/${environment || cmdArgs.environment}.json`);
     return readJsonFile(filePath);
 };
 
-const readContextConfiguration = cmdArgs => {
+/**
+ * Read all environments defined within the cmdArgs.
+ *
+ * @param cmdArgs
+ * @returns {*}
+ */
+const readEnvironmentsConfiguration = cmdArgs => {
+    return cmdArgs.environment.reduce((acc, env) => {
+        acc[env] = readEnvironmentConfiguration(cmdArgs, env);
+        return acc;
+    }, {});
+}
+
+const readContextConfiguration = (cmdArgs, environment = undefined) => {
     let filePath = path.resolve(`${cmdArgs.config}/contexts.json`);
     let contexts = readJsonFile(filePath);
-    let environmentDetails = contexts.find(context => context.environment === cmdArgs.environment);
+    let environmentDetails = contexts.find(context => (context.environment) === environment || cmdArgs.environment);
     return environmentDetails
 };
 
@@ -44,8 +65,13 @@ const readEmailNotificationConfiguration = cmdArgs => {
     return readJsonFile(filePath);
 }
 
+const resolveEnvironmentValue = (cmdArgs) => {
+    cmdArgs.environment = cmdArgs.environment.length === 1 ? cmdArgs.environment[0] : cmdArgs.environment;
+}
+
 module.exports = {
     readEnvironmentConfiguration,
+    readEnvironmentsConfiguration,
     readContextConfiguration,
     readNodeSizeConfiguration,
     readBookkitConfiguration,

@@ -2,8 +2,8 @@ const {callCliCommand} = require("../cmd/cmd-exec-module.js");
 const {readContextConfiguration} = require("../configuration/configuration-reader-module");
 const {CONSOLE_LOG} = require("../../logger/logger");
 
-const getPodsMetadata = async cmdArgs => {
-    let contextSettings = readContextConfiguration(cmdArgs);
+const getPodsMetadata = async (cmdArgs, environment = undefined) => {
+    let contextSettings = readContextConfiguration(cmdArgs, environment);
     await callCliCommand(`kubectl config use-context ${contextSettings.context}`);
     let podDetails = await callCliCommand(`kubectl get pods -n ${contextSettings.nameSpace} -o jsonpath='{.items[*]}'`);
     return getArrayFromLineContent(podDetails).map(getPodDetail);

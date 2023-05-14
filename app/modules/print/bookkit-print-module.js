@@ -3,28 +3,12 @@ const login = require("../client/authorize-module");
 const {guessKeysWithSpecificKeys, guessKeysWithoutSpecificKeys} = require("./helper/print-helper-module");
 const {updateSection} = require("./helper/bookkit-helper-module");
 const {gatherProblemsFromEvaluationResult} = require("../evalution-module");
+const {uu5StringTableTemplate} = require("./template/table-template");
 
 const ERROR_COLOR_SCHEME = {
     colorSchema: "red",
     bgStyle: "filled"
 };
-
-const uu5StringTemplate = (rows, columns, header) => {
-    return `<uu5string/>
-        <UU5.Bricks.Lsi>
-            <UU5.Bricks.Lsi.Item language="en">
-                <UU5.Bricks.Section contentEditable level="3" header="${header.toUpperCase()}" colorSchema=null>
-                    <UuContentKit.Bricks.BlockDefault>
-                        <UU5.RichText.Block uu5string="Last update on ${new Date()}"/>
-                    </UuContentKit.Bricks.BlockDefault>
-                    <Uu5TilesBricks.Table 
-                        data='<uu5json/>${JSON.stringify(rows)}' 
-                        columns='<uu5json/>${JSON.stringify(columns)}'
-                    />
-                </UU5.Bricks.Section>
-            </UU5.Bricks.Lsi.Item>
-        </UU5.Bricks.Lsi>`;
-}
 
 const generateUu5StringForKey = (messages, header) => {
     let columns = guessKeysWithSpecificKeys(messages, "subApp", header).map(col => {
@@ -41,7 +25,7 @@ const generateUu5StringForKey = (messages, header) => {
                 style: item[header]?.includes("NOK") ? ERROR_COLOR_SCHEME : {}
             }
         });
-    return uu5StringTemplate(rows, columns, header);
+    return uu5StringTableTemplate(rows, columns, header);
 }
 
 const generateUu5StringProblemReport = (messages, header) => {
@@ -53,7 +37,7 @@ const generateUu5StringProblemReport = (messages, header) => {
             style: ERROR_COLOR_SCHEME
         }
     });
-    return uu5StringTemplate(rows, columns, header);
+    return uu5StringTableTemplate(rows, columns, header);
 }
 
 const printToBookkit = async (evaluationResult, cmdArgs) => {

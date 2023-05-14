@@ -127,42 +127,44 @@ const evaluatePodMetadata = (pods, environmentConfiguration, cmdArgs) => {
     const EVALUATE_KEY_VOLUME = "VOLUME";
 
     const result = [];
-    Object.keys(environmentConfiguration).forEach(subApp => {
-        let subAppConfig = environmentConfiguration[subApp];
-        if (subAppConfig.required) {
-            let evaluateSubApp = {subApp};
-            if (cmdArgs.deployment) {
-                evaluateSubApp[EVALUATE_KEY_DEPLOYMENT] = evaluateDeployment(pods, subApp, subAppConfig);
-                evaluateSubApp[EVALUATE_KEY_NODE_SELECTOR] = evaluateNodeSelector(pods, subApp, subAppConfig);
+    Object.keys(environmentConfiguration)
+        .filter(subApp => environmentConfiguration[subApp].required)
+        .forEach(subApp => {
+            let subAppConfig = environmentConfiguration[subApp];
+            if (subAppConfig.required) {
+                let evaluateSubApp = {subApp};
+                if (cmdArgs.deployment) {
+                    evaluateSubApp[EVALUATE_KEY_DEPLOYMENT] = evaluateDeployment(pods, subApp, subAppConfig);
+                    evaluateSubApp[EVALUATE_KEY_NODE_SELECTOR] = evaluateNodeSelector(pods, subApp, subAppConfig);
+                }
+                if (cmdArgs.version) {
+                    evaluateSubApp[EVALUATE_KEY_VERSION] = evaluateVersion(pods, subApp);
+                }
+                if (cmdArgs.rts) {
+                    evaluateSubApp[EVALUATE_KEY_RTS] = evaluateRts(pods, subApp);
+                }
+                if (cmdArgs.uri) {
+                    evaluateSubApp[EVALUATE_KEY_DEPLOYMENT_URI] = evaluateDeploymentUri(pods, subApp);
+                }
+                if (cmdArgs.nodesize) {
+                    let nodesizes = readNodeSizeConfiguration(cmdArgs);
+                    evaluateSubApp[EVALUATE_KEY_NODE_SIZE] = evaluateNodeSize(pods, subApp, subAppConfig, nodesizes);
+                }
+                if (cmdArgs.cpu) {
+                    evaluateSubApp[EVALUATE_KEY_CPU] = evaluateCpu(pods, subApp);
+                }
+                if (cmdArgs.memory) {
+                    evaluateSubApp[EVALUATE_KEY_MEMORY] = evaluateMemory(pods, subApp);
+                }
+                if (cmdArgs.status) {
+                    evaluateSubApp[EVALUATE_CONTAINER_STATUS] = evaluateContainerStatus(pods, subApp);
+                }
+                if (cmdArgs.volume) {
+                    evaluateSubApp[EVALUATE_KEY_VOLUME] = evaluateVolume(pods, subApp, subAppConfig);
+                }
+                result.push(evaluateSubApp);
             }
-            if (cmdArgs.version) {
-                evaluateSubApp[EVALUATE_KEY_VERSION] = evaluateVersion(pods, subApp);
-            }
-            if (cmdArgs.rts) {
-                evaluateSubApp[EVALUATE_KEY_RTS] = evaluateRts(pods, subApp);
-            }
-            if (cmdArgs.uri) {
-                evaluateSubApp[EVALUATE_KEY_DEPLOYMENT_URI] = evaluateDeploymentUri(pods, subApp);
-            }
-            if (cmdArgs.nodesize) {
-                let nodesizes = readNodeSizeConfiguration(cmdArgs);
-                evaluateSubApp[EVALUATE_KEY_NODE_SIZE] = evaluateNodeSize(pods, subApp, subAppConfig, nodesizes);
-            }
-            if (cmdArgs.cpu) {
-                evaluateSubApp[EVALUATE_KEY_CPU] = evaluateCpu(pods, subApp);
-            }
-            if (cmdArgs.memory) {
-                evaluateSubApp[EVALUATE_KEY_MEMORY] = evaluateMemory(pods, subApp);
-            }
-            if (cmdArgs.status) {
-                evaluateSubApp[EVALUATE_CONTAINER_STATUS] = evaluateContainerStatus(pods, subApp);
-            }
-            if (cmdArgs.volume) {
-                evaluateSubApp[EVALUATE_KEY_VOLUME] = evaluateVolume(pods, subApp, subAppConfig);
-            }
-            result.push(evaluateSubApp);
-        }
-    });
+        });
     return result;
 }
 

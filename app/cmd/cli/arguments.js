@@ -5,7 +5,7 @@ const cmdArgumentsDefinition = [
     name: 'command',
     defaultOption: true,
     type: String,
-    description: 'check, print, update, help commands. All these can be used as default commands without providing --command argument.'
+    description: 'check, print, update, overview, help commands. All these can be used as default commands without providing --command argument.'
   },
   {
     name: 'config',
@@ -16,8 +16,9 @@ const cmdArgumentsDefinition = [
   {
     name: 'environment',
     alias: 'e',
+    multiple: true,
     type: String,
-    description: 'Environment name defined in the base configuration folder unde the filename [env].json.'
+    description: 'Environment name defined in the base configuration folder under the filename [env].json.'
   },
   {
     name: 'version',
