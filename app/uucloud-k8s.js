@@ -15,6 +15,8 @@ const packageJson = require("../package.json");
 const {sendEmailNotification} = require("./modules/email/email-notification-module");
 const {getOverviewResult} = require("./modules/overview-module");
 const {printOverviewToBookkit} = require("./modules/print/bookkit-overview-module");
+const {scaleUuAppUp, scaleUuAppDown} = require("./modules/k8s/kubectl-deployment-scale-module");
+const {scale} = require("./command/scale/scale-service");
 
 const check = async cmdArgs => {
     let environmentConfiguration = readEnvironmentConfiguration(cmdArgs);
@@ -81,6 +83,14 @@ const update = async cmdArgs => {
     await storeDeployments(deployments, "-updated");
 }
 
+const scaleUp = async cmdArgs => {
+    await scale(cmdArgs, scaleUuAppUp);
+}
+
+const scaleDown = async cmdArgs => {
+    await scale(cmdArgs, scaleUuAppDown);
+}
+
 /**
  * Generate overview defined in the configuration
  *
@@ -106,6 +116,8 @@ module.exports = {
     check,
     print,
     update,
+    scaleUp,
+    scaleDown,
     help,
     overview,
     version

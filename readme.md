@@ -21,6 +21,8 @@ help      Display help
 check     Performs checks based on given parameters and configuration.
 print     Performs print based on given parameters and configuration. Result is printed into the defined bookkit page.
 update    Performs update of the node selectors based on the configuration right in the k8s cluster.
+scaleUp   Scale uuApps up according to configuration.
+scaleDown Scale uuApps down according to configuration.
 overview  Performs overview of multiple environments at once.
 version   Show tool version.
 ```

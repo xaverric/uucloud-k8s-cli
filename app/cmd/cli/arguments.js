@@ -5,7 +5,7 @@ const cmdArgumentsDefinition = [
     name: 'command',
     defaultOption: true,
     type: String,
-    description: 'check, print, update, overview, help commands. All these can be used as default commands without providing --command argument.'
+    description: 'check, print, update, scaleUp, scaleDown, overview, help commands. All these can be used as default commands without providing --command argument.'
   },
   {
     name: 'config',
