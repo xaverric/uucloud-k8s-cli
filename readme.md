@@ -76,9 +76,11 @@ Flag applicable for the print task only. Task reports problems via e-mail notifi
 
 ## Configuration 
 
-### [env].json, i.e. env1.json
-```
-{
+Starting the 2.4.2 release, the format of the configuration files is in JS instead of JSON
+
+### [env].js, i.e. env1.js
+```js
+module.exports = {
   "uu-app-name": {
     "required": true, // identify whether should be checked by the tool at all
     "count": 1, // how many instances of the given uuApp with "uu-app-name" expected 
@@ -103,9 +105,9 @@ Flag applicable for the print task only. Task reports problems via e-mail notifi
   ...
 ```
 
-### contexts.json
-```
-[
+### contexts.js
+```js
+module.exports = [
   {
     "environment": "env1", // environment name, with same name the env1.json file must exist in the same folder
     "context": "env1-context-name", // k8s cluster name to which the tool will switch context via kubectl
@@ -115,9 +117,9 @@ Flag applicable for the print task only. Task reports problems via e-mail notifi
 ]
 ```
 
-### nodesizes.json
-```
-{
+### nodesizes.js
+```js
+module.exports = {
   "NODESIZE_NAME": {
     "cpu": "1",
     "memory": "512Mi"
@@ -135,9 +137,9 @@ Flag applicable for the print task only. Task reports problems via e-mail notifi
 }
 ```
 
-### bookkit-config.json
-```
-{
+### bookkit-config.js
+```js
+module.exports = {
   "accessCode1": "...", // login credentials to bookkit (user must have privileges to mannipulate with the book content)
   "accessCode2": "...", // login credentials to bookkit (user must have privileges to mannipulate with the book content)
   "oidcHost": "...", // oidc/grantToken uri
@@ -177,9 +179,9 @@ Flag applicable for the print task only. Task reports problems via e-mail notifi
 }
 ```
 
-### email-config.json
-```
-{
+### email-config.js
+```js
+module.exports = {
     "transportsConfiguration": {
         "auth": {
             "pass": "password",

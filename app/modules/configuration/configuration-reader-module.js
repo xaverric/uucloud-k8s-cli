@@ -2,20 +2,20 @@ const fs = require("fs");
 const path = require("path");
 
 /**
- * Read JSON file from given file path location and parse its content to the object
- *  
- * @param {string} filePath 
- * @returns 
+ * Read js file from given file path location and parse its content to the object
+ *
+ * @param {string} filePath
+ * @returns
  */
-const readJsonFile = filePath => {
-    let data;
-    try {
-        data = JSON.parse(fs.readFileSync(filePath));
-    } catch (err) {
-        throw new Error(`Error occurred during loading file ${filePath}. Err: ${err}`);
+
+const loadFile = async filePath => {
+    let file = require(filePath);
+    if (typeof file === "function") {
+        let loadedFile = await file();
+        return loadedFile;
     }
-    return data;
-};
+    return file;
+}
 
 /**
  * Read first defined environment file only.
@@ -24,10 +24,10 @@ const readJsonFile = filePath => {
  * @param environment
  * @returns {*}
  */
-const readEnvironmentConfiguration = (cmdArgs, environment = undefined) => {
+const readEnvironmentConfiguration = async (cmdArgs, environment = undefined) => {
     resolveEnvironmentValue(cmdArgs);
-    let filePath = path.resolve(`${cmdArgs.config}/${environment || cmdArgs.environment}.json`);
-    return readJsonFile(filePath);
+    let filePath = path.resolve(`${cmdArgs.config}/${environment || cmdArgs.environment}.js`);
+    return await loadFile(filePath);
 };
 
 /**
@@ -36,33 +36,33 @@ const readEnvironmentConfiguration = (cmdArgs, environment = undefined) => {
  * @param cmdArgs
  * @returns {*}
  */
-const readEnvironmentsConfiguration = cmdArgs => {
-    return cmdArgs.environment.reduce((acc, env) => {
-        acc[env] = readEnvironmentConfiguration(cmdArgs, env);
-        return acc;
-    }, {});
+const readEnvironmentsConfiguration = async cmdArgs => {
+    const result = {};
+    for (const environment of cmdArgs.environment) {
+        result[environment] = await readEnvironmentsConfiguration(cmdArgs, environment);
+    }
+    return result;
 }
 
-const readContextConfiguration = (cmdArgs, environment = undefined) => {
-    let filePath = path.resolve(`${cmdArgs.config}/contexts.json`);
-    let contexts = readJsonFile(filePath);
-    let environmentDetails = contexts.find(context => context.environment === cmdArgs.environment || context.environment === environment);
-    return environmentDetails
+const readContextConfiguration = async (cmdArgs, environment = undefined) => {
+    let filePath = path.resolve(`${cmdArgs.config}/contexts.js`);
+    let contexts = await loadFile(filePath);
+    return contexts.find(context => context.environment === cmdArgs.environment || context.environment === environment);
 };
 
-const readNodeSizeConfiguration = cmdArgs => {
-    let filePath = path.resolve(`${cmdArgs.config}/nodesizes.json`);
-    return readJsonFile(filePath);
+const readNodeSizeConfiguration = async cmdArgs => {
+    let filePath = path.resolve(`${cmdArgs.config}/nodesizes.js`);
+    return await loadFile(filePath);
 }
 
-const readBookkitConfiguration = cmdArgs => {
-    let filePath = path.resolve(`${cmdArgs.config}/bookkit-config.json`);
-    return readJsonFile(filePath);
+const readBookkitConfiguration = async cmdArgs => {
+    let filePath = path.resolve(`${cmdArgs.config}/bookkit-config.js`);
+    return await loadFile(filePath);
 }
 
-const readEmailNotificationConfiguration = cmdArgs => {
-    let filePath = path.resolve(`${cmdArgs.config}/email-config.json`);
-    return readJsonFile(filePath);
+const readEmailNotificationConfiguration = async cmdArgs => {
+    let filePath = path.resolve(`${cmdArgs.config}/email-config.js`);
+    return await loadFile(filePath);
 }
 
 const resolveEnvironmentValue = (cmdArgs) => {

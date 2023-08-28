@@ -14,7 +14,7 @@ const _shouldNotify = (problems, cmdArgs) => {
 }
 
 const _processEmailNotifications = async (problems, cmdArgs) => {
-    const emailConfiguration = readEmailNotificationConfiguration(cmdArgs);
+    const emailConfiguration = await readEmailNotificationConfiguration(cmdArgs);
     const emailContent = buildEmailHtmlContent({problems, environment: cmdArgs.environment.toUpperCase()});
     let transporter = nodemailer.createTransport(emailConfiguration.transportsConfiguration);
     await _sendEmailForRecipients(emailConfiguration, emailContent, transporter, cmdArgs);

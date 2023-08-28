@@ -41,7 +41,7 @@ const generateUu5StringForOverview = (overview, columnType) => {
 }
 
 const printOverviewToBookkit = async (overview, cmdArgs) => {
-    let bookkitConfig = readBookkitConfiguration(cmdArgs);
+    let bookkitConfig = await readBookkitConfiguration(cmdArgs);
     let token = await login(bookkitConfig.oidcHost, bookkitConfig.accessCode1, bookkitConfig.accessCode2);
     let overviewConfig = bookkitConfig.overview;
 

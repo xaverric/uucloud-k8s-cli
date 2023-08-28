@@ -13,7 +13,7 @@ const composeNodeSelectorsPatchArray = (subApp) => {
 
 const updateDeployment = async (subAppEvaluation, subAppConfiguration, cmdArgs) => {
     CONSOLE_LOG.info(`Updating deployment for ${subAppEvaluation.deploymentName}...`)
-    let contextSettings = readContextConfiguration(cmdArgs);
+    let contextSettings = await readContextConfiguration(cmdArgs);
     await callCliCommand(`kubectl config use-context ${contextSettings.context}`);
     await callCliCommand(`kubectl patch deployment ${subAppEvaluation.deploymentName} -n ${contextSettings.nameSpace} --type json -p=${composeNodeSelectorsPatchArray(subAppConfiguration)}`);
 }

@@ -41,7 +41,7 @@ const generateUu5StringProblemReport = (messages, header) => {
 }
 
 const printToBookkit = async (evaluationResult, cmdArgs) => {
-    let bookkitConfig = readBookkitConfiguration(cmdArgs);
+    let bookkitConfig = await readBookkitConfiguration(cmdArgs);
     let token = await login(bookkitConfig.oidcHost, bookkitConfig.accessCode1, bookkitConfig.accessCode2);
     let envBookkitConfig = bookkitConfig.environment[cmdArgs.environment];
 

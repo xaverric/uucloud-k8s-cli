@@ -12,7 +12,7 @@ const storeLogsForDeployment = async (cmdArgs, deploymentName, timestamp) => {
     createDefaultFolderIfNotExist(folder);
 
     CONSOLE_LOG.info(`Extracting log files for deployment/${deploymentName} into ${folder}`);
-    let contextSettings = readContextConfiguration(cmdArgs);
+    let contextSettings = await readContextConfiguration(cmdArgs);
     await callCliCommand(`kubectl config use-context ${contextSettings.context}`);
     await callCliCommand(`kubectl logs -n ${contextSettings.nameSpace} deployment/${deploymentName} --all-containers --ignore-errors --tail=-1 > ${path.resolve(folder, `${deploymentName}_log.txt`)}`);
 };

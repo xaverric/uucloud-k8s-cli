@@ -20,9 +20,9 @@ const {scale} = require("./command/scale/scale-service");
 const {storeLogsForDeployment} = require("./modules/k8s/kubectl-deployment-logs-module");
 
 const check = async cmdArgs => {
-    let environmentConfiguration = readEnvironmentConfiguration(cmdArgs);
+    let environmentConfiguration = await readEnvironmentConfiguration(cmdArgs);
     let pods = await getPodsMetadata(cmdArgs);
-    let evaluationResult = evaluatePodMetadata(pods, environmentConfiguration, cmdArgs);
+    let evaluationResult = await evaluatePodMetadata(pods, environmentConfiguration, cmdArgs);
     let extraPodsNotInConfiguration = evaluateExtraPods(pods, environmentConfiguration, cmdArgs);
 
     if (cmdArgs.noverbose) {
@@ -47,9 +47,9 @@ const check = async cmdArgs => {
  * @returns {Promise<void>}
  */
 const print = async cmdArgs => {
-    let environmentConfiguration = readEnvironmentConfiguration(cmdArgs);
+    let environmentConfiguration = await readEnvironmentConfiguration(cmdArgs);
     let pods = await getPodsMetadata(cmdArgs);
-    let evaluationResult = evaluatePodMetadata(pods, environmentConfiguration, cmdArgs);
+    let evaluationResult = await evaluatePodMetadata(pods, environmentConfiguration, cmdArgs);
 
     await printToBookkit(evaluationResult, cmdArgs);
     CONSOLE_LOG.debug(`${cmdArgs.environment.toUpperCase()} environment details stored into the bookkit page.`);
@@ -58,9 +58,9 @@ const print = async cmdArgs => {
 }
 
 const update = async cmdArgs => {
-    let environmentConfiguration = readEnvironmentConfiguration(cmdArgs);
+    let environmentConfiguration = await readEnvironmentConfiguration(cmdArgs);
     let pods = await getPodsMetadata(cmdArgs);
-    let evaluationResult = evaluatePodMetadata(pods, environmentConfiguration, cmdArgs);
+    let evaluationResult = await evaluatePodMetadata(pods, environmentConfiguration, cmdArgs);
 
     let deployments = await getDeploymentMetadata(cmdArgs);
 
@@ -99,7 +99,7 @@ const scaleDown = async cmdArgs => {
  * @returns {Promise<void>}
  */
 const logs = async cmdArgs => {
-    readEnvironmentConfiguration(cmdArgs);
+    await readEnvironmentConfiguration(cmdArgs);
     let deployments = await getDeploymentMetadata(cmdArgs);
     const deploymentNames = deployments.map(item => item.metadata.name);
     const executionTime = Date.now();
@@ -115,7 +115,7 @@ const logs = async cmdArgs => {
  * @returns {Promise<void>}
  */
 const overview = async cmdArgs => {
-    let environments = readEnvironmentsConfiguration(cmdArgs);
+    let environments = await readEnvironmentsConfiguration(cmdArgs);
     const overview = getOverviewResult(cmdArgs, environments);
 
     await printOverviewToBookkit(overview, cmdArgs)

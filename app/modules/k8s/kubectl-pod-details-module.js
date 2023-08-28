@@ -3,14 +3,14 @@ const {readContextConfiguration} = require("../configuration/configuration-reade
 const {CONSOLE_LOG} = require("../../logger/logger");
 
 const getPodsMetadata = async (cmdArgs, environment = undefined) => {
-    let contextSettings = readContextConfiguration(cmdArgs, environment);
+    let contextSettings = await readContextConfiguration(cmdArgs, environment);
     await callCliCommand(`kubectl config use-context ${contextSettings.context}`);
     let podDetails = await callCliCommand(`kubectl get pods -n ${contextSettings.nameSpace} -o jsonpath='{.items[*]}'`);
     return getArrayFromLineContent(podDetails).map(getPodDetail);
 };
 
 const getPods = async cmdArgs => {
-    let contextSettings = readContextConfiguration(cmdArgs);
+    let contextSettings = await readContextConfiguration(cmdArgs);
     await callCliCommand(`kubectl config use-context ${contextSettings.context}`);
     return await callCliCommand(`kubectl get pods -n ${contextSettings.nameSpace} --sort-by=.metadata.creationTimestamp`);
 };
