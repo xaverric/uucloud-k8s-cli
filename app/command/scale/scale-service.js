@@ -86,7 +86,16 @@ function getCpuUsage(nodeSizes, nodeSize) {
 }
 
 function sortFnc(a, b, cmdArgs) {
+    // Compare by priority first
+    const priorityA = a.priority ?? Number.MAX_SAFE_INTEGER;
+    const priorityB = b.priority ?? Number.MAX_SAFE_INTEGER;
+    if (priorityA !== priorityB) {
+        return priorityA - priorityB;
+    }
+
     let nodeSizeConfiguration = readNodeSizeConfiguration(cmdArgs);
+
+    // If priorities are equal, compare by memory
     const ramComparison = getRAMUsage(nodeSizeConfiguration, a.nodeSize) - getRAMUsage(nodeSizeConfiguration, b.nodeSize);
     if (ramComparison !== 0) {
         return ramComparison; // Sort by memory first

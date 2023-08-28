@@ -17,6 +17,7 @@ const {getOverviewResult} = require("./modules/overview-module");
 const {printOverviewToBookkit} = require("./modules/print/bookkit-overview-module");
 const {scaleUuAppUp, scaleUuAppDown} = require("./modules/k8s/kubectl-deployment-scale-module");
 const {scale} = require("./command/scale/scale-service");
+const {storeLogsForDeployment} = require("./modules/k8s/kubectl-deployment-logs-module");
 
 const check = async cmdArgs => {
     let environmentConfiguration = readEnvironmentConfiguration(cmdArgs);
@@ -92,6 +93,22 @@ const scaleDown = async cmdArgs => {
 }
 
 /**
+ * Extract logs from the namespace for every deployment in the given environment.
+ *
+ * @param cmdArgs
+ * @returns {Promise<void>}
+ */
+const logs = async cmdArgs => {
+    readEnvironmentConfiguration(cmdArgs);
+    let deployments = await getDeploymentMetadata(cmdArgs);
+    const deploymentNames = deployments.map(item => item.metadata.name);
+    const executionTime = Date.now();
+    for (const deploymentName of deploymentNames) {
+        await storeLogsForDeployment(cmdArgs, deploymentName, executionTime);
+    }
+}
+
+/**
  * Generate overview defined in the configuration
  *
  * @param cmdArgs
@@ -116,6 +133,7 @@ module.exports = {
     check,
     print,
     update,
+    logs,
     scaleUp,
     scaleDown,
     help,
