@@ -1,8 +1,15 @@
-const {readEnvironmentConfiguration, readNodeSizeConfiguration} = require("../../modules/configuration/configuration-reader-module");
+const {
+    readEnvironmentConfiguration,
+    readNodeSizeConfiguration
+} = require("../../modules/configuration/configuration-reader-module");
 const {getPodsMetadata} = require("../../modules/k8s/kubectl-pod-details-module");
 const {evaluatePodMetadata} = require("../../modules/evalution-module");
 const {getDeploymentMetadata} = require("../../modules/k8s/kubectl-deployment-details-module");
-const {subAppNameExtractor, deploymentNameExtractor, subAppSelectorFunction} = require("../../modules/c3/c3-search-helper");
+const {
+    subAppNameExtractor,
+    deploymentNameExtractor,
+    subAppSelectorFunction
+} = require("../../modules/c3/c3-search-helper");
 const {SCALE_UP} = require("../../modules/k8s/kubectl-deployment-scale-module");
 const {CONSOLE_LOG} = require("../../logger/logger");
 
@@ -14,11 +21,12 @@ const {CONSOLE_LOG} = require("../../logger/logger");
  * @returns {Promise<void>}
  */
 const scale = async (cmdArgs, scaleFnc) => {
-    let environmentConfiguration = readEnvironmentConfiguration(cmdArgs);
+    let environmentConfiguration = await readEnvironmentConfiguration(cmdArgs);
 
     let pods = await getPodsMetadata(cmdArgs);
-    let evaluationResult = evaluatePodMetadata(pods, environmentConfiguration, cmdArgs);
+    let evaluationResult = await evaluatePodMetadata(pods, environmentConfiguration, cmdArgs);
     let deployments = await getDeploymentMetadata(cmdArgs);
+    let nodeSizeConfiguration = await readNodeSizeConfiguration(cmdArgs);
 
     let subApps = evaluationResult
         .map(subApp => {
@@ -29,7 +37,7 @@ const scale = async (cmdArgs, scaleFnc) => {
                 ...environmentConfiguration[subApp.subApp]
             }
         })
-        .sort((a, b) => sortFnc(a, b, cmdArgs));
+        .sort((a, b) => sortFnc(a, b, cmdArgs, nodeSizeConfiguration));
 
     for (const subAppEvaluation of subApps) {
         const subAppConfiguration = environmentConfiguration[subAppEvaluation.subApp];
@@ -59,7 +67,10 @@ function delay(time) {
 
 // Function to convert memory values to bytes
 function parseMemory(memory) {
-    const multipliers = { "Ki": 1024, "Mi": 1024 ** 2, "Gi": 1024 ** 3 };
+    if (Array.isArray(memory)) {
+        memory = memory[0];
+    }
+    const multipliers = {"Ki": 1024, "Mi": 1024 ** 2, "Gi": 1024 ** 3};
     const value = parseFloat(memory);
     const unit = memory.slice(-2);
     if (isNaN(value) || !multipliers.hasOwnProperty(unit)) {
@@ -85,7 +96,7 @@ function getCpuUsage(nodeSizes, nodeSize) {
     return 0; // Return 0 if nodeSize not found in the nodeSizes object
 }
 
-function sortFnc(a, b, cmdArgs) {
+function sortFnc(a, b, cmdArgs, nodeSizeConfiguration) {
     // Compare by priority first
     const priorityA = a.priority ?? Number.MAX_SAFE_INTEGER;
     const priorityB = b.priority ?? Number.MAX_SAFE_INTEGER;
@@ -93,15 +104,13 @@ function sortFnc(a, b, cmdArgs) {
         return priorityA - priorityB;
     }
 
-    let nodeSizeConfiguration = readNodeSizeConfiguration(cmdArgs);
-
     // If priorities are equal, compare by memory
-    const ramComparison = getRAMUsage(nodeSizeConfiguration, a.nodeSize) - getRAMUsage(nodeSizeConfiguration, b.nodeSize);
+    const ramComparison = getRAMUsage(nodeSizeConfiguration, b.nodeSize) - getRAMUsage(nodeSizeConfiguration, a.nodeSize);
     if (ramComparison !== 0) {
         return ramComparison; // Sort by memory first
     }
     // If memory is equal, then sort by CPU
-    return getCpuUsage(nodeSizeConfiguration, a.nodeSize) - getCpuUsage(nodeSizeConfiguration, b.nodeSize);
+    return getCpuUsage(nodeSizeConfiguration, b.nodeSize) - getCpuUsage(nodeSizeConfiguration, a.nodeSize);
 }
 
 module.exports = {
