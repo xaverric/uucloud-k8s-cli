@@ -116,7 +116,7 @@ const logs = async cmdArgs => {
  */
 const overview = async cmdArgs => {
     let environments = await readEnvironmentsConfiguration(cmdArgs);
-    const overview = getOverviewResult(cmdArgs, environments);
+    const overview = await getOverviewResult(cmdArgs, environments);
 
     await printOverviewToBookkit(overview, cmdArgs)
 }

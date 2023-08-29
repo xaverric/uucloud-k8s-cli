@@ -1,11 +1,11 @@
 const {readNodeSizeConfiguration} = require("./configuration/configuration-reader-module");
 
-const getOverviewResult = (cmdArgs, environments) => {
+const getOverviewResult = async (cmdArgs, environments) => {
     const overview = getOverview(environments);
     return {
         count: getFilteredOverviewColumns(overview, "count"),
         nodesize: getFilteredOverviewColumns(overview, "nodesize"),
-        sum: getSumOverview(cmdArgs, environments, overview)
+        sum: await getSumOverview(cmdArgs, environments, overview)
     }
 }
 
@@ -24,8 +24,8 @@ const getOverview = (environments) => {
     });
 }
 
-const getSumOverview = (cmdArgs, environments, overview) => {
-    let nodesizes = readNodeSizeConfiguration(cmdArgs);
+const getSumOverview = async (cmdArgs, environments, overview) => {
+    let nodesizes = await readNodeSizeConfiguration(cmdArgs);
     return Object.keys(environments).map(environment => {
         return {
             environment,

@@ -1,4 +1,3 @@
-const fs = require("fs");
 const path = require("path");
 
 /**
@@ -39,7 +38,7 @@ const readEnvironmentConfiguration = async (cmdArgs, environment = undefined) =>
 const readEnvironmentsConfiguration = async cmdArgs => {
     const result = {};
     for (const environment of cmdArgs.environment) {
-        result[environment] = await readEnvironmentsConfiguration(cmdArgs, environment);
+        result[environment] = await readEnvironmentConfiguration(cmdArgs, environment);
     }
     return result;
 }
