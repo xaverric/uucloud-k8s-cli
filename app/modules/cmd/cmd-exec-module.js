@@ -4,8 +4,8 @@ const exec = util.promisify(require('child_process').exec);
 
 const callCliCommand = async (command) => {
     LOG.debug(command);
-    const {stdout} = await exec(command);
-    return stdout; 
+    const {stdout} = await exec(command, {maxBuffer: 1024 * 10000});
+    return stdout;
 };
 
 module.exports = {

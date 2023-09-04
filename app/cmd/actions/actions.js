@@ -1,6 +1,6 @@
 const { cmdArguments } = require('../cli/arguments');
 const { usage } = require('../cli/usage');
-const { check, help, print, update, logs, overview, version, scaleUp, scaleDown} = require('../../uucloud-k8s');
+const { check, help, print, update, logs, overview, version, scaleUp, scaleDown, nodes} = require('../../uucloud-k8s');
 
 const COMMANDS = {
   COMMAND_HELP: 'help',
@@ -11,6 +11,7 @@ const COMMANDS = {
   COMMAND_SCALE_UP: 'scaleUp',
   COMMAND_SCALE_DOWN: 'scaleDown',
   COMMAND_OVERVIEW: 'overview',
+  COMMAND_NODES: 'nodes',
   COMMAND_VERSION: 'version'
 };
 
@@ -46,6 +47,10 @@ const actions = {
   runOverview: {
     condition: () => handleCondition(cmdArguments.command === COMMANDS.COMMAND_OVERVIEW),
     action: async () => await overview(cmdArguments)
+  },
+  runNodes: {
+    condition: () => handleCondition(cmdArguments.command === COMMANDS.COMMAND_NODES),
+    action: async () => await nodes(cmdArguments)
   },
   showVersion: {
     condition: () => handleCondition(cmdArguments.command === COMMANDS.COMMAND_VERSION),

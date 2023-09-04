@@ -18,6 +18,8 @@ const {printOverviewToBookkit} = require("./modules/print/bookkit-overview-modul
 const {scaleUuAppUp, scaleUuAppDown} = require("./modules/k8s/kubectl-deployment-scale-module");
 const {scale} = require("./command/scale/scale-service");
 const {storeLogsForDeployment} = require("./modules/k8s/kubectl-deployment-logs-module");
+const {getNodesMetadata} = require("./modules/k8s/kubectl-nodes-details-module");
+const {printNodesToBookkit} = require("./modules/print/bookkit-node-details-module");
 
 const check = async cmdArgs => {
     let environmentConfiguration = await readEnvironmentConfiguration(cmdArgs);
@@ -121,6 +123,18 @@ const overview = async cmdArgs => {
     await printOverviewToBookkit(overview, cmdArgs)
 }
 
+/**
+ * Get worker nodes details for selected environment
+ *
+ * @param cmdArgs
+ * @returns {Promise<void>}
+ */
+const nodes = async cmdArgs => {
+    await readEnvironmentsConfiguration(cmdArgs);
+    const metadata = await getNodesMetadata(cmdArgs);
+    await printNodesToBookkit(metadata.items, cmdArgs);
+}
+
 const help = usage => {
     CONSOLE_LOG.debug(usage);
 }
@@ -138,5 +152,6 @@ module.exports = {
     scaleDown,
     help,
     overview,
+    nodes,
     version
 }
