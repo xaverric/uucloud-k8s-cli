@@ -50,8 +50,9 @@ const evaluateVersion = (pods, subApp) => {
     return uuAppVersion ? uuAppVersion : image;
 };
 
-const evaluateRts = (pods, subApp) => {
-    return getSubApp(pods, subApp)?.metadata?.annotations?.UU_CLOUD_RUNTIME_STACK_CODE ?? "NOK - RTS missing";
+const evaluateRts = (pods, subApp, subAppConfig) => {
+    const rts = getSubApp(pods, subApp)?.metadata?.annotations?.UU_CLOUD_RUNTIME_STACK_CODE;
+    return subAppConfig?.rts === rts ? `${rts} - OK` : `${rts} - NOK`;
 };
 
 const evaluateDeploymentUri = (pods, subApp) => {
@@ -139,7 +140,7 @@ const evaluatePodMetadata = async (pods, environmentConfiguration, cmdArgs) => {
             evaluateSubApp[EVALUATE_KEY_VERSION] = evaluateVersion(pods, subApp);
         }
         if (cmdArgs.rts) {
-            evaluateSubApp[EVALUATE_KEY_RTS] = evaluateRts(pods, subApp);
+            evaluateSubApp[EVALUATE_KEY_RTS] = evaluateRts(pods, subApp, subAppConfig);
         }
         if (cmdArgs.uri) {
             evaluateSubApp[EVALUATE_KEY_DEPLOYMENT_URI] = evaluateDeploymentUri(pods, subApp);
