@@ -39,15 +39,17 @@ const evaluateNodeSelector = (pods, subApp, subAppConfig) => {
  * Return UU_CLOUD_APP_VERSION first in case the attribute exists. Otherwise, return the whole image name.
  * @param pods
  * @param subApp
+ * @param subAppConfig
  * @returns {*|string}
  */
-const evaluateVersion = (pods, subApp) => {
+const evaluateVersion = (pods, subApp, subAppConfig) => {
     let uuAppVersion = getSubApp(pods, subApp)?.metadata?.annotations?.UU_CLOUD_APP_VERSION;
     let image = getSubApp(pods, subApp)?.spec?.containers[0]?.image;
     if (!uuAppVersion && !image) {
         return "NOK - Version missing"
     }
-    return uuAppVersion ? uuAppVersion : image;
+    const version = uuAppVersion ? uuAppVersion : image;
+    return subAppConfig?.version === version ? `${version} - OK` : `${version} - NOK`;
 };
 
 const evaluateRts = (pods, subApp, subAppConfig) => {
@@ -137,7 +139,7 @@ const evaluatePodMetadata = async (pods, environmentConfiguration, cmdArgs) => {
             evaluateSubApp[EVALUATE_KEY_NODE_SELECTOR] = evaluateNodeSelector(pods, subApp, subAppConfig);
         }
         if (cmdArgs.version) {
-            evaluateSubApp[EVALUATE_KEY_VERSION] = evaluateVersion(pods, subApp);
+            evaluateSubApp[EVALUATE_KEY_VERSION] = evaluateVersion(pods, subApp, subAppConfig);
         }
         if (cmdArgs.rts) {
             evaluateSubApp[EVALUATE_KEY_RTS] = evaluateRts(pods, subApp, subAppConfig);
