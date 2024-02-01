@@ -15,11 +15,15 @@ const deploymentNameExtractor = deployment =>
  * @param subApp
  * @returns {boolean}
  */
-const subAppSelectorFunction = (pod, subApp) =>
-    pod?.metadata?.annotations?.APP_PACK_URL_PATH === subApp ||
-    pod?.spec?.containers[0]?.name === subApp ||
-    pod?.metadata?.labels?.["workload.cloud.uu/spp-0"] === subApp ||
-    pod?.metadata?.labels?.["app.kubernetes.io/name"] === subApp;
+const subAppSelectorFunction = (pod, subApp) => {
+    if (pod?.metadata?.annotations?.APP_PACK_URL_PATH === subApp || pod?.spec?.containers[0]?.name === subApp) {
+        return true;
+    } else if (pod?.metadata?.labels?.["workload.cloud.uu/spp-0"]) {
+        return pod?.metadata?.labels?.["workload.cloud.uu/spp-0"] === subApp
+    } else {
+        return pod?.metadata?.labels?.["app.kubernetes.io/name"] === subApp;
+    }
+}
 
 const getSubApp = (pods, subApp) => {
     return pods.find(pod => subAppSelectorFunction(pod, subApp));
