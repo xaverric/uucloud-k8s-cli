@@ -1,8 +1,11 @@
 const subAppNameExtractor = deployment =>
     deployment?.spec?.template?.metadata?.annotations?.APP_PACK_URL_PATH ||
-    deployment?.metadata?.labels?.["app.kubernetes.io/name"]
+    deployment?.metadata?.labels?.["workload.cloud.uu/spp-0"] ||
+    deployment?.metadata?.labels?.["app.kubernetes.io/name"];
 
-const deploymentNameExtractor = deployment => deployment?.metadata?.labels?.["app.kubernetes.io/name"];
+const deploymentNameExtractor = deployment =>
+    deployment?.metadata?.labels?.["workload.cloud.uu/spp-0"] ||
+    deployment?.metadata?.labels?.["app.kubernetes.io/name"];
 
 /**
  * Try to find subApp name by APP_PACK_URL_PATH first.
@@ -15,7 +18,8 @@ const deploymentNameExtractor = deployment => deployment?.metadata?.labels?.["ap
 const subAppSelectorFunction = (pod, subApp) =>
     pod?.metadata?.annotations?.APP_PACK_URL_PATH === subApp ||
     pod?.spec?.containers[0]?.name === subApp ||
-    pod?.metadata?.labels?.["app.kubernetes.io/name"] === subApp
+    pod?.metadata?.labels?.["workload.cloud.uu/spp-0"] === subApp ||
+    pod?.metadata?.labels?.["app.kubernetes.io/name"] === subApp;
 
 const getSubApp = (pods, subApp) => {
     return pods.find(pod => subAppSelectorFunction(pod, subApp));
