@@ -20,6 +20,7 @@ const {scale} = require("./command/scale/scale-service");
 const {storeLogsForDeployment} = require("./modules/k8s/kubectl-deployment-logs-module");
 const {getNodesMetadata} = require("./modules/k8s/kubectl-nodes-details-module");
 const {printNodesToBookkit} = require("./modules/print/bookkit-node-details-module");
+const {execDateTime} = require("./command/exec/exec-service");
 
 const check = async cmdArgs => {
     let environmentConfiguration = await readEnvironmentConfiguration(cmdArgs);
@@ -94,6 +95,18 @@ const scaleDown = async cmdArgs => {
     await scale(cmdArgs, scaleUuAppDown);
 }
 
+const exec = async cmdArgs => {
+    let result = await execDateTime(cmdArgs);
+    result.sort((a, b) => a.time - b.time);
+    const difference = new Date(result[result.length - 1].time - result[0].time).getSeconds();
+    result = result.map(item => {
+        item.time = `${item.time.toString()}${difference >= cmdArgs.threshold ? " - NOK" : ""}`
+        return item;
+    });
+    printVerbose(result, cmdArgs);
+    await sendEmailNotification(result, cmdArgs);
+}
+
 /**
  * Extract logs from the namespace for every deployment in the given environment.
  *
@@ -153,5 +166,6 @@ module.exports = {
     help,
     overview,
     nodes,
+    exec,
     version
 }

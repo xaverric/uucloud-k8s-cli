@@ -163,6 +163,9 @@ const evaluatePodMetadata = async (pods, environmentConfiguration, cmdArgs) => {
         if (cmdArgs.volume) {
             evaluateSubApp[EVALUATE_KEY_VOLUME] = evaluateVolume(pods, subApp, subAppConfig);
         }
+        if (cmdArgs.time) {
+            evaluateSubApp.podName = getSubApp(pods, subApp)?.metadata.name
+        }
         result.push(evaluateSubApp);
     }
 

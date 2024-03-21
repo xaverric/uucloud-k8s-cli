@@ -5,7 +5,7 @@ const cmdArgumentsDefinition = [
     name: 'command',
     defaultOption: true,
     type: String,
-    description: 'check, print, update, logs, nodes, scaleUp, scaleDown, overview, help commands. All these can be used as default commands without providing --command argument.'
+    description: 'check, print, update, logs, nodes, exec, scaleUp, scaleDown, overview, help commands. All these can be used as default commands without providing --command argument.'
   },
   {
     name: 'config',
@@ -69,6 +69,16 @@ const cmdArgumentsDefinition = [
     name: 'volume',
     type: Boolean,
     description: 'Display and verify uuApp volume mount.'
+  },
+  {
+    name: 'time',
+    type: Boolean,
+    description: 'Display uuApp container time'
+  },
+  {
+    name: 'threshold',
+    type: Number,
+    description: 'Maximum threshold in seconds.'
   },
   {
     name: 'table',

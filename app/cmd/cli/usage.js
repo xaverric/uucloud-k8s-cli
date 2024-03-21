@@ -21,6 +21,7 @@ const usageDefinition = [
       { name: 'logs', summary: 'Extract live logs from the containers.' },
       { name: 'nodes', summary: 'Provide worker-nodes detial overview.' },
       { name: 'scale', summary: 'Performs update of the node selectors based on the configuration right in the k8s cluster.' },
+      { name: 'exec', summary: 'Performs update of the node selectors based on the configuration right in the k8s cluster.' },
       { name: 'overview', summary: 'Performs overview of multiple environments at once.' },
       { name: 'version', summary: 'Show tool version.' }
     ]
