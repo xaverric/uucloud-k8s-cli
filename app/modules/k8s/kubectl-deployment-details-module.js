@@ -15,7 +15,7 @@ const getArrayFromLineContent = (lines) => {
             .slice(1)
             .slice(0, -1)
     }
-    return result.split("||||");
+    return result.length ? result.split("||||") : [];
 };
 
 const getPodDetail = line => {
