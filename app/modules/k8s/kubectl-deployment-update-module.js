@@ -6,7 +6,7 @@ const nodeSelectorAddPatchTemplate = (value) => `{"op":"add","path":"/spec/templ
 
 const composeNodeSelectorsPatchArray = (subApp) => {
     let patchArray = subApp?.nodeSelectors?.map(nodeSelector => {
-        return nodeSelectorAddPatchTemplate(nodeSelector).replaceAll("\"", "\\\"")
+        return nodeSelectorAddPatchTemplate(nodeSelector)
     })
     return `[${patchArray.join(",")}]`;
 }
@@ -15,7 +15,7 @@ const updateDeployment = async (subAppEvaluation, subAppConfiguration, cmdArgs) 
     CONSOLE_LOG.info(`Updating deployment for ${subAppEvaluation.deploymentName}...`)
     let contextSettings = await readContextConfiguration(cmdArgs);
     await callCliCommand(`kubectl config use-context ${contextSettings.context}`);
-    await callCliCommand(`kubectl patch deployment ${subAppEvaluation.deploymentName} -n ${contextSettings.nameSpace} --type json -p=${composeNodeSelectorsPatchArray(subAppConfiguration)}`);
+    await callCliCommand(`kubectl patch deployment ${subAppEvaluation.deploymentName} -n ${contextSettings.nameSpace} --type json -p='${composeNodeSelectorsPatchArray(subAppConfiguration)}'`);
 }
 
 module.exports = {
