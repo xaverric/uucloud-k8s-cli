@@ -16,7 +16,7 @@ const deploymentNameExtractor = deployment =>
  * @returns {boolean}
  */
 const subAppSelectorFunction = (pod, subApp) => {
-    if (pod?.metadata?.annotations?.APP_PACK_URL_PATH === subApp || pod?.spec?.containers[0]?.name === subApp) {
+   if (pod?.metadata?.name === subApp || pod?.metadata?.annotations?.APP_PACK_URL_PATH === subApp || pod?.spec?.containers[0]?.name === subApp) {
         return true;
     } else if (pod?.metadata?.labels?.["workload.cloud.uu/spp-0"]) {
         return pod?.metadata?.labels?.["workload.cloud.uu/spp-0"] === subApp
