@@ -3,7 +3,7 @@ const {
     readNodeSizeConfiguration
 } = require("../../modules/configuration/configuration-reader-module");
 const {getPodsMetadata} = require("../../modules/k8s/kubectl-pod-details-module");
-const {evaluatePodMetadata} = require("../../modules/evalution-module");
+const {evaluateDeploymentMetadata, evaluatePodMetadata} = require("../../modules/evalution-module");
 const {getDeploymentMetadata} = require("../../modules/k8s/kubectl-deployment-details-module");
 const {
     subAppNameExtractor,
@@ -24,7 +24,7 @@ const scale = async (cmdArgs, scaleFnc) => {
     let environmentConfiguration = await readEnvironmentConfiguration(cmdArgs);
 
     let pods = await getPodsMetadata(cmdArgs);
-    let evaluationResult = await evaluatePodMetadata(pods, environmentConfiguration, cmdArgs);
+    let evaluationResult = await evaluateDeploymentMetadata(pods, environmentConfiguration, cmdArgs);
     let deployments = await getDeploymentMetadata(cmdArgs);
     let nodeSizeConfiguration = await readNodeSizeConfiguration(cmdArgs);
 
@@ -52,7 +52,7 @@ const waitForUuAppStart = async (cmdArgs, subApp, operation, time) => {
     let pod = pods.find(pod => subAppSelectorFunction(pod, subApp));
     if (operation === SCALE_UP) {
         CONSOLE_LOG.info(`Waiting for ${subApp} to start... ${time}s`);
-        if (pod?.status?.conditions.find(condition => condition.type === "Ready")?.status === "True") {
+        if (pod?.status?.conditions.find(condition => condition.type === "Initialized")?.status === "True") {
             return;
         } else {
             await delay(5000);

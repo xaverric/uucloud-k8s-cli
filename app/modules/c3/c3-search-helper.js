@@ -4,6 +4,7 @@ const subAppNameExtractor = deployment =>
     deployment?.metadata?.labels?.["app.kubernetes.io/name"];
 
 const deploymentNameExtractor = deployment =>
+    deployment?.metadata?.name ||
     deployment?.metadata?.labels?.["workload.cloud.uu/spp-0"] ||
     deployment?.metadata?.labels?.["app.kubernetes.io/name"];
 
