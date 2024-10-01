@@ -177,6 +177,7 @@ const evaluatePodMetadata = async (pods, environmentConfiguration, cmdArgs) => {
 
 const evaluateDeploymentMetadata = async (pods, environmentConfiguration, cmdArgs) => {
     const EVALUATE_KEY_DEPLOYMENT = "DEPLOYMENT";
+    const EVALUATE_KEY_NODE_SELECTOR = "NODE_SELECTOR";
 
     const result = [];
     const subApps = Object.keys(environmentConfiguration).filter(subApp => environmentConfiguration[subApp].required);
@@ -185,6 +186,7 @@ const evaluateDeploymentMetadata = async (pods, environmentConfiguration, cmdArg
         let evaluateSubApp = {subApp};
         if (cmdArgs.deployment) {
             evaluateSubApp[EVALUATE_KEY_DEPLOYMENT] = evaluateDeployment(pods, subApp, subAppConfig);
+            evaluateSubApp[EVALUATE_KEY_NODE_SELECTOR] = evaluateNodeSelector(pods, subApp, subAppConfig);
         }
         result.push(evaluateSubApp);
     }

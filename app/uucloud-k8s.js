@@ -2,7 +2,7 @@ const {
     readEnvironmentConfiguration,
     readEnvironmentsConfiguration,
 } = require("./modules/configuration/configuration-reader-module");
-const {evaluatePodMetadata, evaluateExtraPods} = require("./modules/evalution-module");
+const {evaluatePodMetadata, evaluateExtraPods, evaluateDeploymentMetadata} = require("./modules/evalution-module");
 const {getPodsMetadata} = require("./modules/k8s/kubectl-pod-details-module");
 const {printNoVerboseStatus, printVerbose} = require("./modules/print/console-print-module");
 const {printToBookkit} = require("./modules/print/bookkit-print-module");
@@ -63,7 +63,7 @@ const print = async cmdArgs => {
 const update = async cmdArgs => {
     let environmentConfiguration = await readEnvironmentConfiguration(cmdArgs);
     let pods = await getPodsMetadata(cmdArgs);
-    let evaluationResult = await evaluatePodMetadata(pods, environmentConfiguration, cmdArgs);
+    let evaluationResult = await evaluateDeploymentMetadata(pods, environmentConfiguration, cmdArgs);
 
     let deployments = await getDeploymentMetadata(cmdArgs);
 
