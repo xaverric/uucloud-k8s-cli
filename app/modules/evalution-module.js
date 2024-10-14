@@ -64,7 +64,9 @@ const evaluateDeploymentUri = (pods, subApp) => {
 const evaluateNodeSize = (pods, subApp, subAppConfig, nodeSizes) => {
     let result = [];
     let subAppCpu = evaluateCpu(pods, subApp);
+    let subAppCpuLimit = evaluateCpu(pods, subApp, "limits");
     let subAppMemory = evaluateMemory(pods, subApp);
+    let subAppMemoryLimit = evaluateMemory(pods, subApp, "limits");
     let foundNodeSizeKey = Object.keys(nodeSizes)
         .filter(nodeSizeName => nodeSizeName === subAppConfig.nodeSize)
         .filter(nodeSizeName =>
@@ -76,7 +78,20 @@ const evaluateNodeSize = (pods, subApp, subAppConfig, nodeSizes) => {
     } else {
         result.push(`NodeSize (Expected/Found): ${subAppConfig.nodeSize}/${foundNodeSizeKey}, CPU (Expected/Current): ${nodeSizes[subAppConfig.nodeSize]?.cpu}/${subAppCpu}, RAM: ${nodeSizes[subAppConfig.nodeSize]?.memory}/${subAppMemory} - NOK`)
     }
-    return result.join(" ");
+    if (subAppConfig.noLimit) {
+        if (subAppCpuLimit !== "NOK - CPU missing" || subAppMemoryLimit !== "NOK - RAM missing") {
+            result.push(`Limit should be removed, but it's present - NOK`);
+        } else {
+            result.push(`Limit is removed - OK`);
+        }
+    } else {
+        if (subAppCpuLimit !== "NOK - CPU missing" || subAppMemoryLimit !== "NOK - RAM missing") {
+            result.push(`Limit is set - OK`);
+        } else {
+            result.push(`Limit should be set, but it's removed - NOK`);
+        }
+    }
+    return result.join(" / ");
 };
 
 const isNodeSizeValueEqual = (nodesize, valueName, currentSubAppValue) => {
@@ -86,12 +101,12 @@ const isNodeSizeValueEqual = (nodesize, valueName, currentSubAppValue) => {
     return nodesize?.[valueName] === currentSubAppValue;
 }
 
-const evaluateCpu = (pods, subApp) => {
-    return getSubApp(pods, subApp)?.spec?.containers[0]?.resources?.requests?.cpu ?? "NOK - CPU missing";
+const evaluateCpu = (pods, subApp, resourceType = "requests") => {
+    return getSubApp(pods, subApp)?.spec?.containers[0]?.resources?.[resourceType]?.cpu ?? "NOK - CPU missing";
 };
 
-const evaluateMemory = (pods, subApp) => {
-    return getSubApp(pods, subApp)?.spec?.containers[0]?.resources?.requests?.memory ?? "NOK - RAM missing";
+const evaluateMemory = (pods, subApp, resourceType = "requests") => {
+    return getSubApp(pods, subApp)?.spec?.containers[0]?.resources?.[resourceType]?.memory ?? "NOK - RAM missing";
 };
 
 const evaluateContainerStatus = (pods, subApp) => {

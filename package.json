@@ -1,6 +1,6 @@
 {
   "name": "uucloud-k8s-cli",
-  "version": "2.6.6",
+  "version": "2.7.0",
   "description": "An amazing command line tool allowing you to verify your k8s deployments.",
   "scripts": {},
   "author": "Daniel Jílek",
