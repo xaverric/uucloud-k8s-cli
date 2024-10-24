@@ -80,15 +80,15 @@ const evaluateNodeSize = (pods, subApp, subAppConfig, nodeSizes) => {
     }
     if (subAppConfig.noLimit) {
         if (subAppCpuLimit !== "NOK - CPU missing" || subAppMemoryLimit !== "NOK - RAM missing") {
-            result.push(`Limit should be removed, but it's present - NOK`);
+            result.push(`Limit should be removed, but it's present - CPU: ${subAppCpuLimit}, RAM: ${subAppMemoryLimit}`);
         } else {
             result.push(`Limit is removed - OK`);
         }
     } else {
-        if (subAppCpuLimit !== "NOK - CPU missing" || subAppMemoryLimit !== "NOK - RAM missing") {
+        if (subAppCpuLimit !== "NOK - CPU missing" && subAppMemoryLimit !== "NOK - RAM missing") {
             result.push(`Limit is set - OK`);
         } else {
-            result.push(`Limit should be set, but it's removed - NOK`);
+            result.push(`Limit should be set, but it's removed - CPU: ${subAppCpuLimit}, RAM: ${subAppMemoryLimit}`);
         }
     }
     return result.join(" / ");
