@@ -57,7 +57,7 @@ const waitForUuAppStart = async (cmdArgs, subApp, operation, time, subAppConfigu
             return;
         } else {
             await delay(5000);
-            await waitForUuAppStart(cmdArgs, subApp, operation, time + 5);
+            await waitForUuAppStart(cmdArgs, subApp, operation, time + 5, subAppConfiguration);
         }
     }
 }
