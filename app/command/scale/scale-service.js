@@ -43,16 +43,17 @@ const scale = async (cmdArgs, scaleFnc) => {
         const subAppConfiguration = environmentConfiguration[subAppEvaluation.subApp];
         const operation = await scaleFnc(subAppEvaluation, subAppConfiguration, cmdArgs);
         const time = 0;
-        await waitForUuAppStart(cmdArgs, subAppEvaluation.subApp, operation, time);
+        await waitForUuAppStart(cmdArgs, subAppEvaluation.subApp, operation, time, subAppConfiguration);
     }
 }
 
-const waitForUuAppStart = async (cmdArgs, subApp, operation, time) => {
+const waitForUuAppStart = async (cmdArgs, subApp, operation, time, subAppConfiguration) => {
     let pods = await getPodsMetadata(cmdArgs);
     let pod = pods.find(pod => subAppSelectorFunction(pod, subApp));
     if (operation === SCALE_UP) {
         CONSOLE_LOG.info(`Waiting for ${subApp} to start... ${time}s`);
-        if (pod?.status?.conditions.find(condition => condition.type === "Initialized")?.status === "True") {
+        const expectedCondition = subAppConfiguration.priority ? "Ready" : "Initialized";
+        if (pod?.status?.conditions.find(condition => condition.type === expectedCondition)?.status === "True") {
             return;
         } else {
             await delay(5000);
